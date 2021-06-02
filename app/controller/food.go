@@ -2,7 +2,7 @@ package controller
 
 
 import (
-	"gopherence/web/app/model"
+	"github.com/gopherence/foods/app/model"
 	"encoding/json"
 	"io/ioutil"
 	"log"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gopherence/web/app/controller"
+	"github.com/gopherence/foods/app/controller"
 	"log"
 	"net/http"
 )
