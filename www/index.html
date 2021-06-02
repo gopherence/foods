@@ -1,0 +1,78 @@
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <title>Foods</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="text-center">
+      <h1>Foods</h1>
+    </div>
+    <br>
+    <br>
+    <h3>Create food</h3>
+    <hr>
+    <div class="form-inline">
+      <div class="form-group mx-sm-3 mb-2">
+        <input class="form-control" name="name" placeholder="Enter food" />
+      </div>
+      <button class="btn btn-primary mb-2" create>Save</button>
+    </div>
+    <br>
+    <br>
+    <h3>List of foods</h3>
+    <table class="table" id="foods">
+      <thead>
+        <tr>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody id="foodsRows"></tbody>
+    </table>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+      const API = 'http://localhost:8080/foods'
+
+      const renderRows = foods => {
+          let rows = foods.map(food => {
+              return $('<tr>')
+                  .append($('<td>').append(food.name))
+          })
+          $('#foodsRows').html(rows)
+      }
+
+      const getFoods = () => {
+          $.ajax({
+              url: API,
+              success: foods => {
+                  renderRows(foods)
+                  $('[name]').val('')
+              }
+          })
+      }
+
+      const createFood = () => {
+          let name = $('[name=name]').val()
+          $.ajax({
+              method: 'POST',
+              url: API,
+              data: JSON.stringify({ name }),
+              dataType: 'json',
+              contentType: 'application/json',
+              success: getFoods
+          })
+      }
+
+      $(() => {
+          getFoods()
+          $('[create]').click(createFood)
+      })
+  </script>
+</body>
+
+</html>
