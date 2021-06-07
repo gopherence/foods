@@ -34,13 +34,12 @@ func createFood(w http.ResponseWriter, r *http.Request) {
 		responseBody = map[string]string{"message": "body is invalid"}
 	} else {
 		responseBody = food
-	}
 
-	if err := food.Create(); err != nil {
-		log.Printf("Error on create food. %s", err)
-		statusCode = http.StatusInternalServerError
-		responseBody = map[string]string{"message": "internal server error"}
-		return
+		if err := food.Create(); err != nil {
+			log.Printf("Error on create food. %s", err)
+			statusCode = http.StatusInternalServerError
+			responseBody = map[string]string{"message": "internal server error"}
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=ascii")
@@ -80,7 +79,6 @@ func readJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		log.Printf("Error on unmarshall JSON to data structure. %s", err.Error())
-		w.WriteHeader(http.StatusBadRequest)
 	}
 	return err
 }
