@@ -1,12 +1,12 @@
 package controller
 
-
 import (
-	"github.com/gopherence/foods/app/model"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gopherence/foods/app/model"
 )
 
 func FoodHandle(w http.ResponseWriter, r *http.Request) {
@@ -18,11 +18,11 @@ func FoodHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	case "POST":
 		createFood(w, r)
+		return
 	}
 
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
-
 
 func createFood(w http.ResponseWriter, r *http.Request) {
 	statusCode := http.StatusOK

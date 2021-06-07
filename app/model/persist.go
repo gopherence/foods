@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-const dataPath = "data"
+const dataPath = "var/data"
 
 var persist = &filesystem{}
 
