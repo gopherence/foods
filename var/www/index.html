@@ -10,6 +10,7 @@
   <div class="container">
     <div class="text-center">
       <h1>Foods</h1>
+      <h4 id="instanceInfo"></h4>
     </div>
     <br>
     <br>
@@ -36,7 +37,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
-      const API = 'http://localhost:8080/foods'
+      const FOODAPI = 'http://localhost:8080/foods'
+      const INSTANCEAPI = 'http://localhost:8080/instance'
 
       const renderRows = foods => {
           let rows = foods.map(food => {
@@ -48,7 +50,7 @@
 
       const getFoods = () => {
           $.ajax({
-              url: API,
+              url: FOODAPI,
               success: foods => {
                   renderRows(foods)
                   $('[name]').val('')
@@ -60,7 +62,7 @@
           let name = $('[name=name]').val()
           $.ajax({
               method: 'POST',
-              url: API,
+              url: FOODAPI,
               data: JSON.stringify({ name }),
               dataType: 'json',
               contentType: 'application/json',
@@ -68,9 +70,19 @@
           })
       }
 
+      const getInstanceInfo = () => {
+        $.ajax({
+          url: INSTANCEAPI,
+          success: info => {
+              $('#instanceInfo').html(info)
+          }
+        })
+      }
+
       $(() => {
           getFoods()
           $('[create]').click(createFood)
+          getInstanceInfo()
       })
   </script>
 </body>
