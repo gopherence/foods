@@ -10,19 +10,20 @@ import (
 func InstanceHandle(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[instance] %s %s", r.Method, r.URL.Path)
 
+	responseBody := []byte{}
+	statusCode := http.StatusMethodNotAllowed
+
 	switch r.Method {
 	case "GET":
-		currentInstance(w)
-		return
+		responseBody, statusCode = currentInstance(w)
 	}
 
-	w.WriteHeader(http.StatusMethodNotAllowed)
+	w.Header().Set("Content-Type", "text/plain; charset=ascii")
+	w.WriteHeader(statusCode)
+	w.Write(responseBody)
 }
 
-func currentInstance(w http.ResponseWriter) {
+func currentInstance(w http.ResponseWriter) ([]byte, int) {
 	info := fmt.Sprintf("Architecture: %s - OS: %s", runtime.GOARCH, runtime.GOOS)
-
-	w.Header().Set("Content-Type", "application/json; charset=ascii")
-	w.WriteHeader(http.StatusOK)
-	writeJSON(w, info)
+	return []byte(info), http.StatusOK
 }

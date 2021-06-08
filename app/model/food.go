@@ -6,9 +6,9 @@ type Food struct {
 	Name string `json:"name"`
 }
 
-// Find all foods
-func Find() ([]Food, error) {
-	return persist.find()
+// List return all foods
+func List() ([]Food, error) {
+	return persist.list()
 }
 
 // Create register a new food

@@ -9,76 +9,58 @@ import (
 	"github.com/gopherence/foods/app/model"
 )
 
+// FoodHandle responsible for creating and listing foods
 func FoodHandle(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[foods] %s %s", r.Method, r.URL.Path)
 
+	responseBody := []byte{}
+	statusCode := http.StatusMethodNotAllowed
+
 	switch r.Method {
 	case "GET":
-		foods(w)
-		return
+		responseBody, statusCode = foods(w)
 	case "POST":
-		createFood(w, r)
-		return
-	}
-
-	w.WriteHeader(http.StatusMethodNotAllowed)
-}
-
-func createFood(w http.ResponseWriter, r *http.Request) {
-	statusCode := http.StatusOK
-	var responseBody interface{}
-	var food model.Food
-	if err := readJSON(w, r, &food); err != nil {
-		log.Printf("Error on convert JSON to food. %s", err)
-		statusCode = http.StatusBadRequest
-		responseBody = map[string]string{"message": "body is invalid"}
-	} else {
-		responseBody = food
-
-		if err := food.Create(); err != nil {
-			log.Printf("Error on create food. %s", err)
-			statusCode = http.StatusInternalServerError
-			responseBody = map[string]string{"message": "internal server error"}
-		}
+		responseBody, statusCode = createFood(w, r)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=ascii")
 	w.WriteHeader(statusCode)
-	writeJSON(w, responseBody)
+	w.Write(responseBody)
 }
 
-func foods(w http.ResponseWriter) {
-	foods, err := model.Find()
+func foods(w http.ResponseWriter) ([]byte, int) {
+	foods, err := model.List()
 	if err != nil {
-		log.Printf("Not found foods. %s", err)
+		log.Printf("Error on list foods. %s", err)
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=ascii")
-	w.WriteHeader(http.StatusOK)
-	writeJSON(w, foods)
-}
-
-func writeJSON(w http.ResponseWriter, data interface{}) error {
-	body, err := json.Marshal(data)
+	body, err := json.Marshal(foods)
 	if err != nil {
-		log.Printf("Couldn't marshall data structure to JSON. %s", err.Error())
-		return err
+		log.Printf("Error on marshall data structure to JSON. %s", err)
+		return []byte{}, http.StatusInternalServerError
 	}
 
-	w.Write(body)
-	return nil
+	return body, http.StatusOK
 }
 
-func readJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
+func createFood(w http.ResponseWriter, r *http.Request) ([]byte, int) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("Error on read request body. %s", err.Error())
-		return err
+		log.Printf("Error on read request body. %s", err)
+		return []byte{}, http.StatusInternalServerError
 	}
 
-	err = json.Unmarshal(body, data)
+	var food model.Food
+	err = json.Unmarshal(body, &food)
 	if err != nil {
-		log.Printf("Error on unmarshall JSON to data structure. %s", err.Error())
+		log.Printf("Error on unmarshall JSON to data structure. %s", err)
+		return []byte{}, http.StatusBadRequest
 	}
-	return err
+
+	if err := food.Create(); err != nil {
+		log.Printf("Error on create food. %s", err)
+		return []byte{}, http.StatusInternalServerError
+	}
+
+	return body, http.StatusOK
 }

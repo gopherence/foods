@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/gopherence/foods/app/controller"
 	"log"
 	"net/http"
 	"runtime"
+
+	"github.com/gopherence/foods/app/controller"
 )
 
 func main() {
 	http.HandleFunc("/foods", controller.FoodHandle)
-	//http.HandleFunc("/instance", controller.InstanceHandle)
+	http.HandleFunc("/instance", controller.InstanceHandle)
 
 	fs := http.FileServer(http.Dir("./var/www"))
 	http.Handle("/", fs)
