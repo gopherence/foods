@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -17,7 +16,7 @@ type filesystem struct {
 func (fs *filesystem) list() ([]Food, error) {
 	foodDataPath := filepath.Join(dataPath, foodPath)
 
-	content, err := ioutil.ReadFile(foodDataPath)
+	content, err := os.ReadFile(foodDataPath)
 	if err != nil {
 		return []Food{}, err
 	}
@@ -45,5 +44,5 @@ func (fs *filesystem) create(food *Food) error {
 		return err
 	}
 
-	return ioutil.WriteFile(foodDataPath, content, os.FileMode(0644))
+	return os.WriteFile(foodDataPath, content, os.FileMode(0644))
 }

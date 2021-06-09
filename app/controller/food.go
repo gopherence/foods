@@ -2,7 +2,7 @@ package controller
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -44,7 +44,7 @@ func foods(w http.ResponseWriter) ([]byte, int) {
 }
 
 func createFood(w http.ResponseWriter, r *http.Request) ([]byte, int) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Error on read request body. %s", err)
 		return []byte{}, http.StatusInternalServerError
